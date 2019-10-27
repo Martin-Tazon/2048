@@ -1,5 +1,8 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+
+# plt.imshow on grid to print a heatmap
 
 random.seed(0)
 
@@ -8,14 +11,13 @@ grid=np.zeros([n,n]).astype(int)
 
 def print_grid(g):
 	gn = g.shape[0]
-	art = ''
+	art = ' '
 	for row in range(gn):
 		for col in range(gn):
-			art = art + str(g[row][col]) + ' '
-		art = art + '\n'
+			art = art + str(g[row][col]) + '\t'
+		art = art + '\n\n '
 	print()	
 	print (art)
-	print()	
 
 def check_if_free(g,i,j):
 	return g[i][j] == 0
@@ -40,131 +42,243 @@ def check_if_gameover(g):
 	else:
 		return False
 
-def make_move(g):
+def move_down(g):
 	gn = g.shape[0]
-	# Get the move
+	posinv = False
+	first = True
+	possible = True
+	# Group
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if row == gn-1: continue
+				if g[row][col] != 0:
+					if g[row+1][col] == 0:
+						g[row+1][col] = g[row][col]
+						g[row][col] = 0
+						possible=True
+		# Check if may be invalid
+		if first and not possible:
+			posinv = True
+		first = False
+	
+	# Add
+	added=False
+	for row in reversed(range(n)):
+		for col in range(gn): 
+			if row == 0: continue
+			if g[row][col] != 0:
+				if g[row-1][col] == g[row][col]:
+					g[row][col] = g[row-1][col] * 2
+					g[row-1][col] = 0
+					added=True
+		
+	# Check if invalid and if is ask for new move then return
+	if posinv and not added:
+		print ('Invalid move, try again!')
+		print_grid(g)
+		g = make_move(g)
+		return g
+
+	# Group
+	possible = True
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if row == gn-1: continue
+				if g[row][col] != 0:
+					if g[row+1][col] == 0:
+						g[row+1][col] = g[row][col]
+						g[row][col] = 0
+						possible=True
+
+	return g
+
+def move_up(g):
+	gn = g.shape[0]
+	posinv = False
+	first = True
+	possible = True
+	# Group
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if row == 0: continue
+				if g[row][col] != 0:
+					if g[row-1][col] == 0:
+						g[row-1][col] = g[row][col]
+						g[row][col] = 0
+						possible=True
+		# Check if may be invalid
+		if first and not possible:
+			posinv = True
+		first = False
+	
+	# Add
+	added=False
+	for row in range(gn):            	
+		for col in range(gn): 
+			if row == gn-1: continue              
+			if g[row][col] != 0:
+				if g[row+1][col] == g[row][col]:
+					g[row][col] = g[row+1][col] * 2
+					g[row+1][col] = 0
+					added=True
+	
+	# Check if invalid and if is ask for new move then return
+	if posinv and not added:
+		print ('Invalid move, try again!')
+		print_grid(g)
+		g = make_move(g)
+		return g
+
+	# Group
+	possible = True
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if row == 0: continue
+				if g[row][col] != 0:
+					if g[row-1][col] == 0:
+						g[row-1][col] = g[row][col]
+						g[row][col] = 0
+						possible=True
+
+	return g
+
+def move_right(g):
+	gn = g.shape[0]
+	posinv = False
+	first = True
+	possible = True
+	# Group
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if col == gn-1: continue
+				if g[row][col] != 0:
+					if g[row][col+1] == 0:
+						g[row][col+1] = g[row][col]
+						g[row][col] = 0
+						possible=True
+		# Check if may be invalid
+		if first and not possible:
+			posinv = True
+		first = False
+	
+	# Add
+	added=False
+	for row in range(gn):            	
+		for col in reversed(range(gn)): 
+			if col == 0: continue
+			if g[row][col] != 0:
+				if g[row][col-1] == g[row][col]:
+					g[row][col] = g[row][col-1] * 2
+					g[row][col-1] = 0
+					added=True
+	
+	# Check if invalid and if is ask for new move then return
+	if posinv and not added:
+		print ('Invalid move, try again!')
+		print_grid(g)
+		g = make_move(g)
+		return g
+
+	# Group
+	possible = True
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if col == gn-1: continue
+				if g[row][col] != 0:
+					if g[row][col+1] == 0:
+						g[row][col+1] = g[row][col]
+						g[row][col] = 0
+						possible=True
+
+	return g
+
+def move_left(g):
+	gn = g.shape[0]
+	posinv = False
+	first = True
+	possible = True
+	# Group
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if col == 0: continue
+				if g[row][col] != 0:
+					if g[row][col-1] == 0:
+						g[row][col-1] = g[row][col]
+						g[row][col] = 0
+						possible=True
+		# Check if may be invalid
+		if first and not possible:
+			posinv = True
+		first = False
+	
+	# Add
+	added=False
+	for row in range(gn):            	
+		for col in reversed(range(gn)): 
+			if col == gn-1: continue
+			if g[row][col] != 0:
+				if g[row][col+1] == g[row][col]:
+					g[row][col] = g[row][col+1] * 2
+					g[row][col+1] = 0
+					added=True
+	
+	# Check if invalid and if is ask for new move then return
+	if posinv and not added:
+		print ('Invalid move, try again!')
+		print_grid(g)
+		g = make_move(g)
+		return g
+
+	# Group
+	possible = True
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if col == 0: continue
+				if g[row][col] != 0:
+					if g[row][col-1] == 0:
+						g[row][col-1] = g[row][col]
+						g[row][col] = 0
+						possible=True
+
+	return g
+
+
+def make_move(g):
+	'''	A move is:
+			1.Group (If no movs possible invalid)
+			2.Add	(If possible and no add -> invalid move)
+			3.Group'''
+
+	gn=g.shape[0]
 	while True:
 		move = input("Please enter a move... ")
 		if move in ['a','s','d','w']: break
-	
-	if move == 'w':
-		first = True
-		change = True
-		while change:
-			change = False
-			for row in range(gn):
-				for col in range(gn): 
-					if row == 0: continue
-					if g[row][col] != 0:
-						if g[row-1][col] == 0:
-							g[row-1][col] = g[row][col]
-							g[row][col] = 0
-							change=True
-			if first and not change:
-				print ('Invalid move, try again!')
-				print_grid(g)
-				make_move(g)
-			first = False
-	elif move == 's':
-		first = True
-		change = True
-		while change:
-			change = False
-			for row in range(gn):
-				for col in range(gn): 
-					if row == 3: continue
-					if g[row][col] != 0:
-						if g[row+1][col] == 0:
-							g[row+1][col] = g[row][col]
-							g[row][col] = 0
-							change=True
-			if first and not change:
-				print ('Invalid move, try again!')
-				print_grid(g)
-				make_move(g)
-			first = False
-
+		
+	if move == 's':
+		return move_down(g)
+	elif move == 'w':
+		return move_up(g)
 	elif move == 'd':
-		first = True
-		change = True
-		while change:
-			change = False
-			for row in range(gn):
-				for col in range(gn): 
-					if col == 3: continue
-					if g[row][col] != 0:
-						if g[row][col+1] == 0:
-							g[row][col+1] = g[row][col]
-							g[row][col] = 0
-							change=True
-						#elif g[row][col+1] == g[row][col]:
-						#	change = True
-			if first and not change:
-				print ('Invalid move, try again!')
-				print_grid(g)
-				make_move(g)
-				return g
-			first = False
-		for row in range(gn):
-			for col in range(gn):
-				if col == 3: continue
-				if g[row][col] != 0:
-					if g[row][col+1] == g[row][col]:
-						g[row][col+1] = g[row][col+1]*2
-						g[row][col] = 0
-		change = True
-		while change:
-			change = False
-			for row in range(gn):
-				for col in range(gn): 
-					if col == 3: continue
-					if g[row][col] != 0:
-						if g[row][col+1] == 0:
-							g[row][col+1] = g[row][col]
-							g[row][col] = 0
-							change=True
-
+		return move_right(g)
 	elif move == 'a':
-		first = True
-		change = True
-		while change:
-			change = False
-			for row in range(gn):
-				for col in range(gn): 
-					if col == 0: continue
-					if g[row][col] != 0:
-						if g[row][col-1] == 0:
-							g[row][col-1] = g[row][col]
-							g[row][col] = 0
-							change=True
-						elif g[row][col-1] == g[row][col]:
-							change=True
-			if first and not change:
-				print ('Invalid move, try again!')
-				print_grid(g)
-				make_move(g)
-				return g
-			first = False
-		for row in range(gn):
-			for col in range(gn):
-				if col == 0: continue
-				if g[row][col] != 0:
-					if g[row][col-1] == g[row][col]:
-						g[row][col-1] = g[row][col-1]*2
-						g[row][col] = 0
-		change = True
-		while change:
-			change = False
-			for row in range(gn):
-				for col in range(gn): 
-					if col == 0: continue
-					if g[row][col] != 0:
-						if g[row][col-1] == 0:
-							g[row][col-1] = g[row][col]
-							g[row][col] = 0
-							change=True
+		return move_left(g)
 
-	return g
 
 # Init board
 grid = add_new(grid)
@@ -176,13 +290,10 @@ while True:
 	grid = add_new(grid)
 	print_grid(grid)
 	if check_if_gameover(grid): break
-	
-	grid = np.zeros([n,n]).astype(int)
-	grid[0][0]=2
-	grid[0][1]=2
-	print_grid(grid)
+
 	# Make move
 	make_move(grid)
 	print ('Move done')
 	print_grid(grid)
+
 
