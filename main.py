@@ -3,12 +3,8 @@ import random
 import matplotlib.pyplot as plt
 
 # plt.imshow on grid to print a heatmap
-# Cuando ass_new llena el grid, puede no ser game over si hay movimientos possibles!!
+# Cuando add_new llena el grid, puede no ser game over si hay movimientos possibles!!
 
-random.seed(0)
-
-n=4
-grid=np.zeros([n,n]).astype(int)
 
 def print_grid(g):
 	gn = g.shape[0]
@@ -36,9 +32,25 @@ def add_new(g):
 			added = True
 	return g
 
-def check_if_gameover(g): # Need to check if any move possible
-	# THIS IS WRONG
+def check_if_gameover(g):
 	if 0 not in g:
+		# Check if moves possible
+		gn = g.shape[0]
+		for row in range(gn):
+			for col in range(gn):
+				if row == gn-1 and col == gn-1:
+					continue
+				elif row == gn-1:
+					if g[row][col+1] == g[row][col]:
+						return False
+				elif col == gn-1:
+					if g[row+1][col] == g[row][col]:
+						return False
+				else:
+					if g[row+1][col] == g[row][col] or g[row][col+1] == g[row][col]:
+						print('Moves are possible')
+						return False
+		# If function never exits with False, is Game Over!
 		print ('GAME OVER!')
 		return True
 	else:
@@ -230,7 +242,7 @@ def move_left(g):
 	# Add
 	added=False
 	for row in range(gn):            	
-		for col in reversed(range(gn)): 
+		for col in range(gn): 
 			if col == gn-1: continue
 			if g[row][col] != 0:
 				if g[row][col+1] == g[row][col]:
@@ -281,20 +293,39 @@ def make_move(g):
 	elif move == 'a':
 		return move_left(g)
 
-
+# --- MAIN --- #
 # Init board
-grid = add_new(grid)
+random.seed(0)
 
+n=4
+
+
+fn = input('Enter saved game name: (Press enter to start new) ')
+
+if fn == '':
+	grid=np.zeros([n,n]).astype(int)
+	grid = add_new(grid)
+	grid = add_new(grid)
+else:
+	fh = open(fn)
+	gridList = []
+	for line in fh:
+		line = line.strip()
+		gridList.append(line.split())
+	grid = np.array(gridList).astype(int)
+
+first=True
 # Main loop
 while True:
-	if check_if_gameover(grid): break
 	# Possibildad de undo ?
-	grid = add_new(grid)
+	if not first:
+		grid = add_new(grid)
 	print_grid(grid)
 	if check_if_gameover(grid): break
 
 	# Make move
 	make_move(grid)
 	print_grid(grid)
+	first = False
 
 
