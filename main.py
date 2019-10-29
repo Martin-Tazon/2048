@@ -36,7 +36,8 @@ def add_new(g):
 			added = True
 	return g
 
-def check_if_gameover(g):
+def check_if_gameover(g): # Need to check if any move possible
+	# THIS IS WRONG
 	if 0 not in g:
 		print ('GAME OVER!')
 		return True
