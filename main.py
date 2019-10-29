@@ -3,6 +3,7 @@ import random
 import matplotlib.pyplot as plt
 
 # plt.imshow on grid to print a heatmap
+# Cuando ass_new llena el grid, puede no ser game over si hay movimientos possibles!!
 
 random.seed(0)
 
@@ -293,7 +294,6 @@ while True:
 
 	# Make move
 	make_move(grid)
-	print ('Move done')
 	print_grid(grid)
 
 
