@@ -48,13 +48,93 @@ def check_if_gameover(g):
 						return False
 				else:
 					if g[row+1][col] == g[row][col] or g[row][col+1] == g[row][col]:
-						print('Moves are possible')
-						return False
 		# If function never exits with False, is Game Over!
 		print ('GAME OVER!')
 		return True
 	else:
 		return False
+
+def move_any(g,m):
+	if m == 's':
+		a=+1
+		b=0
+		reverse=True
+	elif m == 'w':
+		a=-1
+		b=0
+		reverse=False
+	elif m == 'a':
+		a=0
+		b=
+		reverse=
+	elif m == 'd':
+		a=0
+		b=
+		reverse=
+		
+	gn = g.shape[0]
+	posinv = False
+	first = True
+	possible = True
+	# Group
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if row == gn-1: continue
+				if g[row][col] != 0:
+					if g[row+a][col+b] == 0:
+						g[row+a][col+b] = g[row][col]
+						g[row][col] = 0
+						possible=True
+		# Check if may be invalid
+		if first and not possible:
+			posinv = True
+		first = False
+	
+	# Add
+	added=False
+	if reverse:
+		if a != 0:
+			rows = reversed(range(n))
+			cols = range(gn)
+		elif b != 0:
+			rows = range(gn)
+			cols = reversed(range(n))
+	else:
+		rows = range(gn)
+		cols = range(gn)
+	for row in rows:
+		for col in cols: 
+			if row == 0: continue
+			if g[row][col] != 0:
+				if g[row-a][col-b] == g[row][col]:
+					g[row][col] = g[row-a][col-b] * 2
+					g[row-a][col-b] = 0
+					added=True
+		
+	# Check if invalid and if is ask for new move then return
+	if posinv and not added:
+		print ('Invalid move, try again!')
+		print_grid(g)
+		g = make_move(g)
+		return g
+
+	# Group
+	possible = True
+	while possible:
+		possible = False
+		for row in range(gn):
+			for col in range(gn): 
+				if row == gn-1: continue
+				if g[row][col] != 0:
+					if g[row+a][col+b] == 0:
+						g[row+a][col+b] = g[row][col]
+						g[row][col] = 0
+						possible=True
+
+	return g
+
 
 def move_down(g):
 	gn = g.shape[0]
